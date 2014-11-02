@@ -1,8 +1,10 @@
 #include "GameManager.h"
 
-GameManager::GameManager(bool running, GLFWwindow *window) : _running(running), _window(window) {}
+GameManager::GameManager(bool running, GLFWwindow *window) : _running(running), _window(window), _renderSystem(&RenderSystem::getRenderSystem()) {}
 
-GameManager::~GameManager() {}
+GameManager::~GameManager() {
+    RenderSystem::destroyRenderSystem();
+}
 
 GameManager& GameManager::getGameManager() {
     static GameManager *gameManager = 0;
@@ -20,7 +22,6 @@ GameManager& GameManager::getGameManager() {
         glfwMakeContextCurrent(window);
 
         gameManager = new GameManager(true, window);
-        std::cout << "GameManager created!" << std::endl;
     }
     return *gameManager;
 }
@@ -28,7 +29,6 @@ GameManager& GameManager::getGameManager() {
 void GameManager::destroyGameManager() {
     GameManager *gameManager = &getGameManager();
     delete gameManager;
-    std::cout << "GameManager is kill!" << std::endl;
     GLFWwindow *window = glfwGetCurrentContext();
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -36,10 +36,7 @@ void GameManager::destroyGameManager() {
 
 void GameManager::runGameLoop() {
     while (_running) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _running = !glfwWindowShouldClose(_window);
-
-        glfwSwapBuffers(_window);
-        glfwPollEvents();
+        _renderSystem->render();
     }
 }
