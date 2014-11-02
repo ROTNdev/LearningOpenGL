@@ -2,6 +2,6 @@
 
 int main() {
     GameManager *gameManager = &GameManager::getGameManager();
-    system("pause");
+    gameManager->runGameLoop();
     GameManager::destroyGameManager();
 }

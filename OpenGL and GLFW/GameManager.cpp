@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-GameManager::GameManager() {}
+GameManager::GameManager(bool running, GLFWwindow *window) : _running(running), _window(window) {}
 
 GameManager::~GameManager() {}
 
@@ -19,7 +19,7 @@ GameManager& GameManager::getGameManager() {
         GLFWwindow *window = glfwCreateWindow(1280, 720, "sp00ki fps", 0, 0);
         glfwMakeContextCurrent(window);
 
-        gameManager = new GameManager();
+        gameManager = new GameManager(true, window);
         std::cout << "GameManager created!" << std::endl;
     }
     return *gameManager;
@@ -32,4 +32,14 @@ void GameManager::destroyGameManager() {
     GLFWwindow *window = glfwGetCurrentContext();
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void GameManager::runGameLoop() {
+    while (_running) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _running = !glfwWindowShouldClose(_window);
+
+        glfwSwapBuffers(_window);
+        glfwPollEvents();
+    }
 }
